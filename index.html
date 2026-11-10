@@ -4493,7 +4493,8 @@
                     `--${input.dataset.color}`,
                     visualColor(input.dataset.color, value),
                 );
-                updateColorReadout(input.dataset.color, value);
+                if (input.dataset.color === activeColorName)
+                    updateColorReadout(input.dataset.color, value);
             }
             function visualColor(name, value) {
                 return root.dataset.theme === "dark" &&
@@ -5506,17 +5507,6 @@
             document
                 .getElementById("copyCss")
                 .addEventListener("click", copyCss);
-            document
-                .getElementById("shareButton")
-                .addEventListener("click", async () => {
-                    syncUrl();
-                    try {
-                        await navigator.clipboard.writeText(location.href);
-                        notify("Share link copied");
-                    } catch {
-                        notify("Current settings are in the URL");
-                    }
-                });
             // Restore a shared state or choose a fresh preset for a new visit.
             try {
                 const encoded = new URLSearchParams(location.search).get(
@@ -5623,6 +5613,11 @@
             } catch {
                 selectRandomPreset();
             }
+            const activeColorInput = colorInputs.find(
+                (input) => input.dataset.color === activeColorName,
+            );
+            if (activeColorInput)
+                updateColorReadout(activeColorName, activeColorInput.value);
             updateFontButtons();
             setTemplate(activeTemplate);
             syncUrl();
