@@ -585,7 +585,7 @@
     </nav>
     <div class="header-controls">
       <label><span class="toolbar-label">Template</span><select class="select header-select" id="templateSelect" aria-label="Choose a template"><option value="landing">Landing page</option><option value="article">Blog post</option></select></label>
-      <label><span class="toolbar-label">Page layout</span><select class="select header-select" id="layoutSelect" aria-label="Choose a page layout"></select></label>
+      <label><span class="toolbar-label">Page layout</span><select class="select header-select" id="layoutSelect" aria-label="Choose a page layout"><option value="centered">Centered</option><option value="split">Split</option><option value="editorial">Editorial</option></select></label>
     </div>
     <div class="top-actions">
       <span class="saved" id="savedState">Link synced</span>
@@ -655,7 +655,7 @@
       </aside>
 
       <section class="stage" aria-label="Template preview">
-        <div class="viewport"><div class="preview-frame" id="previewFrame" data-size="desktop">
+        <div class="viewport"><div class="preview-frame" id="previewFrame" data-size="desktop" data-layout="centered">
           <div id="landingPreview">
             <section class="landing-hero">
               <h2>Good design feels like <span>everything belongs.</span></h2>
@@ -971,12 +971,16 @@
       const keys = Object.keys(presets);
       applyPreset(keys[Math.floor(Math.random() * keys.length)]);
     }
+    const templateLayouts = {
+      landing: Array.from(document.getElementById('layoutSelect').options, option => [option.value, option.textContent]),
+      article: [['narrow','Narrow'],['sidebar','Sidebar'],['magazine','Magazine']]
+    };
     function setTemplate(template) {
       activeTemplate = template;
       document.getElementById('templateSelect').value = template;
       document.getElementById('landingPreview').style.display = template === 'landing' ? '' : 'none';
       document.getElementById('articlePreview').style.display = template === 'article' ? '' : 'none';
-      const layouts = template === 'landing' ? [['centered','Centered'],['split','Split'],['editorial','Editorial']] : [['narrow','Narrow'],['sidebar','Sidebar'],['magazine','Magazine']];
+      const layouts = templateLayouts[template];
       if (!layouts.some(([value]) => value === activeLayout)) activeLayout = layouts[0][0];
       document.getElementById('layoutSelect').innerHTML = layouts.map(([value,label]) => `<option value="${value}">${label}</option>`).join('');
       document.getElementById('layoutSelect').value = activeLayout;
