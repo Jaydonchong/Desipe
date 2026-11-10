@@ -967,6 +967,10 @@
       updateFontButtons();
       syncUrl();
     }
+    function selectRandomPreset() {
+      const keys = Object.keys(presets);
+      applyPreset(keys[Math.floor(Math.random() * keys.length)]);
+    }
     function setTemplate(template) {
       activeTemplate = template;
       document.getElementById('templateSelect').value = template;
@@ -1318,7 +1322,7 @@
         if (['colors','type','full'].includes(state.m)) setViewMode(state.m);
         if (state.p === 'custom') activePreset = 'custom';
       } else {
-        randomizePreset();
+        selectRandomPreset();
       }
     } catch { /* Keep the defaults if a shared query value is incomplete. */ }
     updateFontButtons();
