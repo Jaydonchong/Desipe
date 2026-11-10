@@ -944,9 +944,13 @@
       }
     }
     function updateFontButtons() {
-      document.getElementById('headingFontValue').textContent = document.getElementById('headingFont').value;
-      document.getElementById('bodyFontValue').textContent = document.getElementById('bodyFont').value;
-      document.getElementById('scaleValue').textContent = document.querySelector(`[data-scale="${activeScale}"]`)?.textContent || 'Type scale';
+      const headingFont = document.getElementById('headingFont').value;
+      const bodyFont = document.getElementById('bodyFont').value;
+      document.getElementById('headingFontValue').textContent = headingFont;
+      document.getElementById('bodyFontValue').textContent = bodyFont;
+      document.getElementById('scaleValue').textContent = document.querySelector(`[data-scale="${activeScale}"]`)?.textContent.trim() || 'Type scale';
+      document.querySelectorAll('[data-font-choice]').forEach(button => button.classList.toggle('selected', button.dataset.font === (button.dataset.fontChoice === 'heading' ? headingFont : bodyFont)));
+      document.querySelectorAll('[data-scale]').forEach(button => button.classList.toggle('selected', Number(button.dataset.scale) === activeScale));
     }
     function applyPreset(key) {
       const preset = presets[key];
@@ -961,7 +965,6 @@
       document.getElementById('bodyFont').value = preset.body;
       activeScale = preset.scale;
       root.style.setProperty('--type-scale', activeScale);
-      document.querySelectorAll('.scale-option').forEach(button => button.classList.toggle('selected', Number(button.dataset.scale) === activeScale));
       root.style.setProperty('--heading', fontStack(preset.heading));
       root.style.setProperty('--body', fontStack(preset.body));
       updateFontButtons();
@@ -1031,7 +1034,6 @@
       root.style.setProperty('--body', fontStack(body));
       activeScale = scales[Math.floor(Math.random() * scales.length)];
       root.style.setProperty('--type-scale', activeScale);
-      document.querySelectorAll('[data-scale]').forEach(button => button.classList.toggle('selected', Number(button.dataset.scale) === activeScale));
       updateFontButtons();
       activePreset = 'custom';
       syncUrl();
@@ -1210,7 +1212,6 @@
     document.querySelectorAll('[data-scale]').forEach(button => button.addEventListener('click', () => {
       activeScale = Number(button.dataset.scale);
       root.style.setProperty('--type-scale', activeScale);
-      document.querySelectorAll('[data-scale]').forEach(item => item.classList.toggle('selected', Number(item.dataset.scale) === activeScale));
       updateFontButtons();
       if (button.closest('.dock-popover')) closePopovers();
       syncUrl();
@@ -1219,7 +1220,6 @@
       const heading = button.dataset.fontChoice === 'heading';
       document.getElementById(heading ? 'headingFont' : 'bodyFont').value = button.dataset.font;
       root.style.setProperty(heading ? '--heading' : '--body', fontStack(button.dataset.font));
-      document.querySelectorAll(`[data-font-choice="${button.dataset.fontChoice}"]`).forEach(item => item.classList.toggle('selected', item.dataset.font === button.dataset.font));
       updateFontButtons();
       closePopovers();
       syncUrl();
@@ -1330,7 +1330,6 @@
       }
     } catch { /* Keep the defaults if a shared query value is incomplete. */ }
     updateFontButtons();
-    document.querySelectorAll('[data-font-choice]').forEach(button => button.classList.toggle('selected', button.dataset.font === document.getElementById(button.dataset.fontChoice === 'heading' ? 'headingFont' : 'bodyFont').value));
     setTemplate(activeTemplate);
     syncUrl();
     if (location.hash === '#components') document.getElementById('componentsNav').click();
